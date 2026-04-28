@@ -1,4 +1,4 @@
-function Juegos() {
+function Games() {
   return (
     <div>
       <h2>Listado de Juegos</h2>
@@ -7,4 +7,4 @@ function Juegos() {
   );
 }
 
-export default Juegos;
+export default Games;
