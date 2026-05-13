@@ -1,131 +1,59 @@
+import { Link } from "react-router-dom";
+import "./Auth.css";
+
 function Register() {
   return (
-    <div
-      style={{
-        backgroundColor: "#1f1f1f",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "30px",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "#173b9c",
-          width: "420px",
-          padding: "40px",
-          borderRadius: "10px",
-          color: "white",
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-          }}
-        >
-          Crear Cuenta
-        </h1>
+    <div className="auth">
+      <div className="auth__card">
+        <div className="auth__header">
+          <span className="auth__icon">🎮</span>
+          <h1 className="auth__title">Crear Cuenta</h1>
+          <p className="auth__subtitle">Empezá tu biblioteca gamer</p>
+        </div>
 
-        {/* NOMBRE */}
-        <div style={{ marginBottom: "20px" }}>
-          <label>Nombre</label>
-
+        <div className="auth__field">
+          <label className="auth__label">Nombre</label>
           <input
             type="text"
-            placeholder="Ingrese su nombre"
-            style={{
-              width: "100%",
-              padding: "12px",
-              marginTop: "8px",
-              borderRadius: "5px",
-              border: "none",
-              outline: "none",
-            }}
+            className="auth__input"
+            placeholder="Tu nombre"
           />
         </div>
 
-        {/* EMAIL */}
-        <div style={{ marginBottom: "20px" }}>
-          <label>Email</label>
-
+        <div className="auth__field">
+          <label className="auth__label">Email</label>
           <input
             type="email"
-            placeholder="Ingrese su email"
-            style={{
-              width: "100%",
-              padding: "12px",
-              marginTop: "8px",
-              borderRadius: "5px",
-              border: "none",
-              outline: "none",
-            }}
+            className="auth__input"
+            placeholder="tu@email.com"
           />
         </div>
 
-        {/* PASSWORD */}
-        <div style={{ marginBottom: "20px" }}>
-          <label>Contraseña</label>
-
+        <div className="auth__field">
+          <label className="auth__label">Contraseña</label>
           <input
             type="password"
-            placeholder="Ingrese su contraseña"
-            style={{
-              width: "100%",
-              padding: "12px",
-              marginTop: "8px",
-              borderRadius: "5px",
-              border: "none",
-              outline: "none",
-            }}
+            className="auth__input"
+            placeholder="••••••••"
           />
         </div>
 
-        {/* CONFIRM PASSWORD */}
-        <div style={{ marginBottom: "25px" }}>
-          <label>Confirmar Contraseña</label>
-
+        <div className="auth__field">
+          <label className="auth__label">Confirmar Contraseña</label>
           <input
             type="password"
-            placeholder="Repita su contraseña"
-            style={{
-              width: "100%",
-              padding: "12px",
-              marginTop: "8px",
-              borderRadius: "5px",
-              border: "none",
-              outline: "none",
-            }}
+            className="auth__input"
+            placeholder="••••••••"
           />
         </div>
 
-        {/* BUTTON */}
-        <button
-          style={{
-            width: "100%",
-            padding: "12px",
-            backgroundColor: "#1f1f1f",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-            fontWeight: "bold",
-          }}
-        >
-          Registrarse
-        </button>
+        <button className="auth__btn">Registrarse</button>
 
-        {/* TEXTO */}
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "20px",
-            fontSize: "14px",
-          }}
-        >
-          ¿Ya tenés cuenta? Iniciá sesión
+        <p className="auth__footer">
+          ¿Ya tenés cuenta?{" "}
+          <Link to="/login" className="auth__link">
+            Iniciá sesión
+          </Link>
         </p>
       </div>
     </div>

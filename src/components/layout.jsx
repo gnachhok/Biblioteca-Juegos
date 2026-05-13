@@ -1,10 +1,10 @@
-import Navbar from "./navbar";
+import Navbar from "./Navbar";
 
 function Layout({ children }) {
   return (
     <>
       <Navbar />
-      <main style={{ padding: "20px" }}>
+      <main>
         {children}
       </main>
     </>

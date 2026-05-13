@@ -1,0 +1,89 @@
+.games {
+    background-color: #0b0f1a;
+    min-height: calc(100vh - 60px);
+    padding: 48px 60px;
+    color: #f0f4ff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.games__header {
+    margin-bottom: 32px;
+}
+
+.games__title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #f0f4ff;
+    margin-bottom: 6px;
+}
+
+.games__subtitle {
+    font-size: 14px;
+    color: #7a9bbf;
+}
+
+.games__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+}
+
+.games__filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.games__filter {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid #1e3a5f;
+    border-radius: 20px;
+    color: #7a9bbf;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.games__filter:hover {
+    border-color: #3b82f6;
+    color: #f0f4ff;
+}
+
+.games__filter--active {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #fff;
+}
+
+.games__search {
+    padding: 10px 16px;
+    background: #111827;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    color: #f0f4ff;
+    font-size: 14px;
+    outline: none;
+    width: 220px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.games__search::placeholder {
+    color: #3a5070;
+}
+
+.games__search:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.games__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 28px;
+}
