@@ -185,7 +185,7 @@ function Home() {
             }}
           >
             <img
-              src="https://upload.wikimedia.org/wikipedia/en/4/44/Hogwarts_Legacy.png"
+              src="https://upload.wikimedia.org/wikipedia/en/f/fb/Hogwarts_legacyboxart.png"
               alt="Hogwarts Legacy"
               style={{
                 width: "100%",
