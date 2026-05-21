@@ -4,12 +4,17 @@ import gamesRoute from "./routes/routes.js"
 import Games from "./models/games/games.js"
 import User from "./models/user/user.js"
 import authRoute from "./routes/auth-routes.js"
+import cors from "cors"
 
 const app = express();
 
+app.use(cors({
+    origin: "http://localhost:5173"
+}))
 app.use(express.json());
 app.use(gamesRoute);
 app.use("/auth", authRoute);
+
 
 sequelize.sync()
     .then(() => {
