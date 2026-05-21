@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes} from "sequelize";
 import { sequelize } from "../../config/config.js";
 
 const Game = sequelize.define("Game", {
