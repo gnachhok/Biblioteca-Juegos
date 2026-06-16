@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "./addGames.css";
 
 const PLATAFORMAS = ["PC", "PlayStation 5", "PlayStation 4", "Xbox Series X", "Xbox One", "Nintendo Switch", "Mobile"];
 const GENEROS = ["Acción", "Aventura", "RPG", "Estrategia", "Deportes", "Terror", "Simulación", "Puzzle", "Indie"];
 
 const initialForm = {
-    nombre: "",
-    creador: "",
-    plataforma: "",
-    anio: "",
-    genero: "",
-    caratula: "",
+    title: "",
+    developer: "",
+    gender: "",
+    description: "",
+    status: "Descargar",
+    image: "",
 };
 
 function AddGames() {
@@ -21,15 +22,10 @@ function AddGames() {
 
     const validar = () => {
         const nuevosErrores = {};
-        if (!form.nombre.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
-        if (!form.creador.trim()) nuevosErrores.creador = "El creador es obligatorio.";
-        if (!form.plataforma) nuevosErrores.plataforma = "Seleccioná una plataforma.";
-        if (!form.anio) {
-            nuevosErrores.anio = "El año es obligatorio.";
-        } else if (form.anio < 1950 || form.anio > new Date().getFullYear()) {
-            nuevosErrores.anio = `El año debe estar entre 1950 y ${new Date().getFullYear()}.`;
-        }
-        if (!form.genero) nuevosErrores.genero = "Seleccioná un género.";
+        if (!form.title.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
+        if (!form.developer.trim()) nuevosErrores.creador = "El creador es obligatorio.";
+        if (!form.description.trim()) nuevosErrores.description = "La descripción es obligatoria.";
+        if (!form.gender) nuevosErrores.genero = "Seleccioná un género.";
         return nuevosErrores;
     };
 
@@ -40,22 +36,64 @@ function AddGames() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const nuevosErrores = validar();
         if (Object.keys(nuevosErrores).length > 0) {
             setErrores(nuevosErrores);
             return;
         }
-        setJuegos([{ ...form, id: Date.now() }, ...juegos]);
-        setForm(initialForm);
-        setErrores({});
-        setEnviado(true);
-        setTimeout(() => {
-            setEnviado(false);
-            setMostrarFormulario(false);
-        }, 1800);
-    };
+
+      
+        try {
+
+            const url = editandoId 
+                ? `http://localhost:3000/games/${editandoId}` 
+                : "http://localhost:3000/games";
+
+            const method = editandoId ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method ,
+                headers: {"Content-type": "application/json"},
+                body: JSON.stringify(form)
+            });
+
+            const data = await response.json();
+
+            if (editandoId) {
+            setJuegos(juegos.map((j) => (j.id === editandoId ? data : j)));
+            } else{
+            setJuegos([data, ...juegos])
+            }
+            setForm(initialForm);
+            setErrores({});
+            setEnviado(true);
+            setTimeout(() => {
+                setEnviado(false);
+                setMostrarFormulario(false);
+                setEditandoId(null);
+            }, 1800);
+        } catch (error){
+            console.error("Error al agregar juego", error);
+        }
+    }
+
+        const [editandoId, setEditandoId] = useState(null);
+
+        const handleEdit = (juego) => {
+    setForm({
+        title: juego.title,
+        developer: juego.developer,
+        gender: juego.gender,
+        description: juego.description,
+        status: juego.status,
+        image: juego.image,
+        hoursPlayed: juego.hoursPlayed,
+    });
+    setEditandoId(juego.id);
+    setMostrarFormulario(true);
+};
 
     const handleCancelar = () => {
         setForm(initialForm);
@@ -63,298 +101,23 @@ function AddGames() {
         setMostrarFormulario(false);
     };
 
+    const handleDelete = async (id) => {
+      await fetch(`http://localhost:3000/games/${id}`, {
+        method: "DELETE"
+      });
+      setJuegos(juegos.filter((j) => j.id !== id));
+    }
+
+useEffect(() => {
+    fetch("http://localhost:3000/games")
+        .then(res => res.json())
+        .then(data => setJuegos(data));
+}, []);
+
+
     return (
         <>
-            <style>{`
-        .ag-page {
-          background-color: #0b0f1a;
-          min-height: calc(100vh - 60px);
-          padding: 48px 60px;
-          color: #f0f4ff;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        .ag-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 36px;
-          flex-wrap: wrap;
-          gap: 16px;
-        }
-        .ag-title {
-          font-size: 32px;
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          color: #f0f4ff;
-          margin: 0 0 6px 0;
-        }
-        .ag-subtitle {
-          font-size: 14px;
-          color: #7a9bbf;
-          margin: 0;
-        }
-        .ag-btn-add {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 11px 22px;
-          background: #1d4ed8;
-          border: none;
-          border-radius: 10px;
-          color: #fff;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.15s, transform 0.1s;
-          white-space: nowrap;
-        }
-        .ag-btn-add:hover {
-          background: #2563eb;
-          transform: translateY(-1px);
-        }
-        .ag-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(5, 8, 18, 0.82);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
-          padding: 24px;
-          backdrop-filter: blur(4px);
-          animation: fadeIn 0.18s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .ag-modal {
-          background: #111827;
-          border: 1px solid #1e3a5f;
-          border-radius: 16px;
-          width: 100%;
-          max-width: 520px;
-          max-height: 90vh;
-          overflow-y: auto;
-          padding: 32px;
-          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-          animation: slideUp 0.22s ease;
-        }
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .ag-modal-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 28px;
-        }
-        .ag-modal-title {
-          font-size: 20px;
-          font-weight: 700;
-          color: #f0f4ff;
-          margin: 0;
-        }
-        .ag-btn-close {
-          background: none;
-          border: none;
-          color: #7a9bbf;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 6px;
-          transition: color 0.15s, background 0.15s;
-          display: flex;
-          align-items: center;
-        }
-        .ag-btn-close:hover {
-          color: #f0f4ff;
-          background: #1e3a5f;
-        }
-        .ag-form {
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-        }
-        .ag-field {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .ag-field-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 14px;
-        }
-        .ag-label {
-          font-size: 13px;
-          font-weight: 600;
-          color: #94b4d4;
-          letter-spacing: 0.02em;
-        }
-        .ag-label span {
-          color: #3b82f6;
-          margin-left: 2px;
-        }
-        .ag-input, .ag-select {
-          padding: 10px 14px;
-          background: #0b0f1a;
-          border: 1px solid #1e3a5f;
-          border-radius: 8px;
-          color: #f0f4ff;
-          font-size: 14px;
-          font-family: inherit;
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-          width: 100%;
-          box-sizing: border-box;
-        }
-        .ag-input::placeholder { color: #3a5070; }
-        .ag-input:focus, .ag-select:focus {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .ag-input--error, .ag-select--error { border-color: #ef4444; }
-        .ag-input--error:focus, .ag-select--error:focus {
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-        }
-        .ag-select option { background: #111827; }
-        .ag-error-msg {
-          font-size: 12px;
-          color: #f87171;
-        }
-        .ag-caratula-preview {
-          margin-top: 8px;
-          width: 80px;
-          height: 100px;
-          object-fit: cover;
-          border-radius: 6px;
-          border: 1px solid #1e3a5f;
-        }
-        .ag-form-actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 8px;
-        }
-        .ag-btn-submit {
-          flex: 1;
-          padding: 12px;
-          background: #1d4ed8;
-          border: none;
-          border-radius: 10px;
-          color: #fff;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.15s;
-        }
-        .ag-btn-submit:hover { background: #2563eb; }
-        .ag-btn-cancel {
-          padding: 12px 20px;
-          background: transparent;
-          border: 1px solid #1e3a5f;
-          border-radius: 10px;
-          color: #7a9bbf;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: border-color 0.15s, color 0.15s;
-        }
-        .ag-btn-cancel:hover {
-          border-color: #3b82f6;
-          color: #f0f4ff;
-        }
-        .ag-success {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 14px 18px;
-          background: rgba(16, 185, 129, 0.12);
-          border: 1px solid rgba(16, 185, 129, 0.35);
-          border-radius: 10px;
-          color: #34d399;
-          font-size: 14px;
-          font-weight: 600;
-        }
-        .ag-list-section { margin-top: 40px; }
-        .ag-list-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: #f0f4ff;
-          margin-bottom: 20px;
-        }
-        .ag-game-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-          gap: 20px;
-        }
-        .ag-game-item {
-          background: #111827;
-          border: 1px solid #1e3a5f;
-          border-radius: 12px;
-          padding: 16px;
-          display: flex;
-          gap: 14px;
-          align-items: flex-start;
-          animation: slideUp 0.25s ease;
-        }
-        .ag-game-img {
-          width: 54px;
-          height: 70px;
-          object-fit: cover;
-          border-radius: 6px;
-          flex-shrink: 0;
-        }
-        .ag-game-img-placeholder {
-          width: 54px;
-          height: 70px;
-          border-radius: 6px;
-          background: #1e3a5f;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          font-size: 22px;
-        }
-        .ag-game-info { flex: 1; min-width: 0; }
-        .ag-game-name {
-          font-size: 15px;
-          font-weight: 700;
-          color: #f0f4ff;
-          margin: 0 0 4px 0;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .ag-game-meta {
-          font-size: 12px;
-          color: #7a9bbf;
-          margin: 0 0 6px 0;
-        }
-        .ag-game-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-        .ag-tag {
-          font-size: 11px;
-          font-weight: 600;
-          padding: 2px 8px;
-          border-radius: 12px;
-          background: #1e3a5f;
-          color: #7ab8f5;
-        }
-        .ag-empty {
-          text-align: center;
-          color: #3a5070;
-          font-size: 14px;
-          padding: 48px 0;
-          border: 1px dashed #1e3a5f;
-          border-radius: 12px;
-        }
-        .ag-empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
-        @media (max-width: 640px) {
-          .ag-page { padding: 32px 20px; }
-          .ag-modal { padding: 24px 18px; }
-          .ag-field-row { grid-template-columns: 1fr; }
-        }
-      `}</style>
+            
 
             <div className="ag-page">
                 <div className="ag-header">
@@ -385,18 +148,21 @@ function AddGames() {
                             <div className="ag-game-list">
                                 {juegos.map((j) => (
                                     <div key={j.id} className="ag-game-item">
-                                        {j.caratula ? (
-                                            <img src={j.caratula} alt={j.nombre} className="ag-game-img" onError={(e) => { e.target.style.display = "none"; }} />
+                                        {j.image ? (
+                                            <img src={j.image} alt={j.title} className="ag-game-img" onError={(e) => { e.target.style.display = "none"; }} />
                                         ) : (
                                             <div className="ag-game-img-placeholder">🎮</div>
                                         )}
                                         <div className="ag-game-info">
-                                            <p className="ag-game-name">{j.nombre}</p>
-                                            <p className="ag-game-meta">{j.creador} · {j.anio}</p>
+                                            <p className="ag-game-name">{j.title}</p>
+                                            <p className="ag-game-meta">{j.developer}</p>
                                             <div className="ag-game-tags">
-                                                <span className="ag-tag">{j.genero}</span>
-                                                <span className="ag-tag">{j.plataforma}</span>
+                                                <span className="ag-tag">{j.gender}</span>
                                             </div>
+                                            <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                                                <button className="ag-btn-edit" onClick={() => handleEdit(j)}>Editar</button>
+                                                <button className="ag-btn-delete" onClick={() => handleDelete(j.id)}>Eliminar</button>
+                                            </div>                                            
                                         </div>
                                     </div>
                                 ))}
@@ -418,14 +184,14 @@ function AddGames() {
                             </button>
                         </div>
 
-                        {enviado ? (
-                            <div className="ag-success">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                                ¡Juego agregado exitosamente!
-                            </div>
-                        ) : (
+                            {enviado ? (
+                                <div className="ag-success">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    {editandoId ? "¡Juego actualizado exitosamente!" : "¡Juego agregado exitosamente!"}
+                                </div>
+                            ) : (
                             <form className="ag-form" onSubmit={handleSubmit} noValidate>
 
                                 <div className="ag-field">
@@ -433,71 +199,40 @@ function AddGames() {
                                     <input
                                         className={`ag-input${errores.nombre ? " ag-input--error" : ""}`}
                                         type="text"
-                                        name="nombre"
-                                        value={form.nombre}
+                                        name="title"
+                                        value={form.title}
                                         onChange={handleChange}
                                         placeholder="Ej: The Legend of Zelda"
                                         autoFocus
                                     />
-                                    {errores.nombre && <span className="ag-error-msg">{errores.nombre}</span>}
+                                    {errores.title && <span className="ag-error-msg">{errores.title}</span>}
                                 </div>
 
                                 <div className="ag-field">
-                                    <label className="ag-label">Creador / Desarrolladora <span>*</span></label>
+                                    <label className="ag-label">developer / Desarrolladora <span>*</span></label>
                                     <input
-                                        className={`ag-input${errores.creador ? " ag-input--error" : ""}`}
+                                        className={`ag-input${errores.developer ? " ag-input--error" : ""}`}
                                         type="text"
-                                        name="creador"
-                                        value={form.creador}
+                                        name="developer"
+                                        value={form.developer}
                                         onChange={handleChange}
                                         placeholder="Ej: Nintendo, FromSoftware..."
                                     />
-                                    {errores.creador && <span className="ag-error-msg">{errores.creador}</span>}
-                                </div>
-
-                                <div className="ag-field-row">
-                                    <div className="ag-field">
-                                        <label className="ag-label">Plataforma <span>*</span></label>
-                                        <select
-                                            className={`ag-select${errores.plataforma ? " ag-select--error" : ""}`}
-                                            name="plataforma"
-                                            value={form.plataforma}
-                                            onChange={handleChange}
-                                        >
-                                            <option value="" disabled>Seleccionar...</option>
-                                            {PLATAFORMAS.map((p) => <option key={p} value={p}>{p}</option>)}
-                                        </select>
-                                        {errores.plataforma && <span className="ag-error-msg">{errores.plataforma}</span>}
-                                    </div>
-
-                                    <div className="ag-field">
-                                        <label className="ag-label">Año de salida <span>*</span></label>
-                                        <input
-                                            className={`ag-input${errores.anio ? " ag-input--error" : ""}`}
-                                            type="number"
-                                            name="anio"
-                                            value={form.anio}
-                                            onChange={handleChange}
-                                            placeholder={`Ej: ${new Date().getFullYear()}`}
-                                            min="1950"
-                                            max={new Date().getFullYear()}
-                                        />
-                                        {errores.anio && <span className="ag-error-msg">{errores.anio}</span>}
-                                    </div>
+                                    {errores.developer && <span className="ag-error-msg">{errores.developer}</span>}
                                 </div>
 
                                 <div className="ag-field">
                                     <label className="ag-label">Género <span>*</span></label>
                                     <select
-                                        className={`ag-select${errores.genero ? " ag-select--error" : ""}`}
-                                        name="genero"
-                                        value={form.genero}
+                                        className={`ag-select${errores.gender ? " ag-select--error" : ""}`}
+                                        name="gender"
+                                        value={form.gender}
                                         onChange={handleChange}
                                     >
                                         <option value="" disabled>Seleccionar...</option>
                                         {GENEROS.map((g) => <option key={g} value={g}>{g}</option>)}
                                     </select>
-                                    {errores.genero && <span className="ag-error-msg">{errores.genero}</span>}
+                                    {errores.gender && <span className="ag-error-msg">{errores.gender}</span>}
                                 </div>
 
                                 <div className="ag-field">
@@ -505,20 +240,59 @@ function AddGames() {
                                     <input
                                         className="ag-input"
                                         type="url"
-                                        name="caratula"
-                                        value={form.caratula}
+                                        name="image"
+                                        value={form.image}
                                         onChange={handleChange}
                                         placeholder="https://..."
                                     />
-                                    {form.caratula && (
+                                    {form.image && (
                                         <img
-                                            src={form.caratula}
+                                            src={form.image}
                                             alt="Preview"
-                                            className="ag-caratula-preview"
+                                            className="ag-image-preview"
                                             onError={(e) => { e.target.style.display = "none"; }}
                                         />
                                     )}
                                 </div>
+
+                                <div className="ag-field">
+                                  <label className="ag-label">Descripción <span>*</span></label>
+                                  <textarea
+                                    className={`ag-input${errores.description ? " ag-input--error" : ""}`}
+                                    name="description"
+                                    value={form.description}
+                                    onChange={handleChange}
+                                    placeholder="Descripción del juego..."
+                                    rows={3}
+                                  />
+                                  {errores.description && <span className="ag-error-msg">{errores.description}</span>}
+                                  </div>
+
+                                  <div className="ag-field">
+                                      <label className="ag-label">Status <span>*</span></label>
+                                      <select
+                                          className={`ag-select${errores.status ? " ag-select--error" : ""}`}
+                                          name="status"
+                                          value={form.status}
+                                          onChange={handleChange}
+                                      >
+                                          <option value="Descargar">Descargar</option>
+                                          <option value="Instalado">Instalado</option>
+                                      </select>
+                                  </div>
+
+                                  <div className="ag-field">
+                                      <label className="ag-label">Horas jugadas</label>
+                                      <input
+                                          className="ag-input"
+                                          type="number"
+                                          name="hoursPlayed"
+                                          value={form.hoursPlayed}
+                                          onChange={handleChange}
+                                          placeholder="0"
+                                          min="0"
+                                      />
+                                  </div>
 
                                 <div className="ag-form-actions">
                                     <button type="button" className="ag-btn-cancel" onClick={handleCancelar}>Cancelar</button>

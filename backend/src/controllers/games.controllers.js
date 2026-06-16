@@ -37,8 +37,10 @@ export const updateGames = async (req, res) => {
         {title, developer, gender, description, status, hoursPlayed, image},
         {where: {id: id}}
     );
+    
+    const updatedGame = await Game.findByPk(id)
 
-    return res.json({mensaje: "Juego Actualizado"})
+    return res.json(updatedGame)
 }
 
 export const deleteGames = async (req, res) => {

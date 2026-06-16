@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 
 
+
 const GENRES = ["Todos", "Acción", "Aventura", "RPG"];
 
 function Games() {
@@ -15,6 +16,8 @@ useEffect(() => {
     .then((response) => response.json())
     .then((data) => setGames(data));
 }, []);
+
+
 
   return (
     <div className="games">
