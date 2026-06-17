@@ -50,3 +50,20 @@
     color: #f0f4ff;
     background: #1d3461;
 }
+
+.navbar__logout {
+    padding: 7px 16px;
+    background: transparent;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.navbar__logout:hover {
+    background: #ef4444;
+    color: #fff;
+}
