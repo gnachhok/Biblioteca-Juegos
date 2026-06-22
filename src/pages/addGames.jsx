@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./addGames.css";
+import { useAuth } from "../context/authContext";
 
 const PLATAFORMAS = ["PC", "PlayStation 5", "PlayStation 4", "Xbox Series X", "Xbox One", "Nintendo Switch", "Mobile"];
 const GENEROS = ["Acción", "Aventura", "RPG", "Estrategia", "Deportes", "Terror", "Simulación", "Puzzle", "Indie"];
@@ -11,9 +12,11 @@ const initialForm = {
     description: "",
     status: "Descargar",
     image: "",
+    hoursPlayed: 0,
 };
 
 function AddGames() {
+    const { token } = useAuth();
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [form, setForm] = useState(initialForm);
     const [juegos, setJuegos] = useState([]);
@@ -54,8 +57,11 @@ function AddGames() {
             const method = editandoId ? "PUT" : "POST";
 
             const response = await fetch(url, {
-                method: method ,
-                headers: {"Content-type": "application/json"},
+                method: method,
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify(form)
             });
 
@@ -81,19 +87,20 @@ function AddGames() {
 
         const [editandoId, setEditandoId] = useState(null);
 
-        const handleEdit = (juego) => {
-    setForm({
-        title: juego.title,
-        developer: juego.developer,
-        gender: juego.gender,
-        description: juego.description,
-        status: juego.status,
-        image: juego.image,
-        hoursPlayed: juego.hoursPlayed,
-    });
-    setEditandoId(juego.id);
-    setMostrarFormulario(true);
-};
+    const handleEdit = (juego) => {
+        setForm({
+            title: juego.title,
+            developer: juego.developer,
+            gender: juego.gender,
+            description: juego.description,
+            status: juego.status,
+            image: juego.image || "",
+            hoursPlayed: juego.hoursPlayed || 0,
+        });
+        setEditandoId(juego.id);
+        setEnviado(false);
+        setMostrarFormulario(true);
+    };
 
     const handleCancelar = () => {
         setForm(initialForm);
@@ -102,11 +109,14 @@ function AddGames() {
     };
 
     const handleDelete = async (id) => {
-      await fetch(`http://localhost:3000/games/${id}`, {
-        method: "DELETE"
-      });
-      setJuegos(juegos.filter((j) => j.id !== id));
-    }
+        await fetch(`http://localhost:3000/games/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        setJuegos(juegos.filter((j) => j.id !== id));
+    };
 
 useEffect(() => {
     fetch("http://localhost:3000/games")

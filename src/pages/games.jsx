@@ -1,6 +1,7 @@
 import GameCard from "../components/GameCard";
 import "./Games.css";
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/authContext";
 
 
 
@@ -10,6 +11,7 @@ const GENRES = ["Todos", "Acción", "Aventura", "RPG"];
 function Games() {
 
 const [games, setGames] = useState([]);
+const { token, user } = useAuth();
 
 useEffect(() => {
   fetch("http://localhost:3000/games")
@@ -17,7 +19,25 @@ useEffect(() => {
     .then((data) => setGames(data));
 }, []);
 
+  const handleAddToLibrary = async (gameId) => {
+      const response = await fetch("http://localhost:3000/library", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ userId: user.id, gameId })
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+          alert(data.mensaje || "Error al agregar");
+          return;
+      }
+
+      alert("¡Juego agregado a tu biblioteca!");
+  };
 
   return (
     <div className="games">
@@ -43,7 +63,12 @@ useEffect(() => {
 
       <div className="games__grid">
         {games.map((game) => (
-          <GameCard key={game.id} {...game} />
+            <div key={game.id}>
+                <GameCard {...game} />
+                <button onClick={() => handleAddToLibrary(game.id)}>
+                    + Mi biblioteca
+                </button>
+            </div>
         ))}
       </div>
     </div>

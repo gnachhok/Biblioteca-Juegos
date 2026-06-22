@@ -1,12 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { useAuth } from "../context/authContext";
-import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { token, setToken } = useAuth();
+  const { token, setToken, user } = useAuth();
 
   const handleLogout = () => {
     setToken(null);
@@ -14,14 +13,17 @@ function Navbar() {
     navigate("/");
   };
 
-  const links = [
+
+
+const links = [
     { to: "/", label: "Inicio" },
     { to: "/games", label: "Juegos" },
-    { to: "/add-games", label: "Agregar Juegos" },
     !token && { to: "/login", label: "Login" },
     !token && { to: "/register", label: "Registro" },
-    token && jwtDecode(token).role === "superadmin" && { to: "/super-admin", label: "Super Admin" },
-  ].filter(Boolean);
+    token && (user?.role === "admin" || user?.role === "superadmin") && { to: "/add-games", label: "Agregar Juegos" },
+    token && user?.role === "superadmin" && { to: "/super-admin", label: "Super Admin" },
+    token && { to: "/mi-biblioteca", label: "Mi Biblioteca" },
+].filter(Boolean);
 
   return (
     <nav className="navbar">

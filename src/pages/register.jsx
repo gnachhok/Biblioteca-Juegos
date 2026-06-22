@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useState } from "react";
-import { useAuth } from "../context/authContext";
 
 const TEXTOS = {
   en: {
@@ -40,7 +39,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [idioma, setIdioma] = useState("en");
-  const { setToken } = useAuth();
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const t = TEXTOS[idioma];
@@ -49,8 +48,13 @@ function Register() {
     setIdioma((prev) => (prev === "en" ? "es" : "en"));
   };
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError(t === TEXTOS.es ? "Las contraseñas no coinciden" : "Passwords do not match");
+      return;
+    }
 
     const response = await fetch("http://localhost:3000/auth/register", {
       method: "POST",
@@ -61,10 +65,13 @@ function Register() {
     });
 
     const data = await response.json();
-    console.log(data);
 
-    setToken(data);
-    navigate("/");
+    if (!response.ok) {
+      setError(data.mensaje || "Error al registrarse");
+      return;
+    }
+
+    navigate("/login");
   };
 
   return (
@@ -123,9 +130,10 @@ function Register() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          {error && <p className="auth__error">{error}</p>}
         </div>
 
-        <button className="auth__btn" onClick={handleLogin}>{t.btn}</button>
+        <button className="auth__btn" onClick={handleRegister}>{t.btn}</button>
 
         <p className="auth__footer">
           {t.footerText}{" "}
