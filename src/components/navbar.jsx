@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { useAuth } from "../context/authContext";
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function Navbar() {
     { to: "/add-games", label: "Agregar Juegos" },
     !token && { to: "/login", label: "Login" },
     !token && { to: "/register", label: "Registro" },
+    token && jwtDecode(token).role === "superadmin" && { to: "/super-admin", label: "Super Admin" },
   ].filter(Boolean);
 
   return (
