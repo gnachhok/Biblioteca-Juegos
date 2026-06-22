@@ -51,6 +51,31 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+  if (!nombre.trim()) {
+    setError(t === TEXTOS.es ? "El nombre es obligatorio" : "Name is required");
+    return;
+  }
+
+  if (!email.trim()) {
+    setError(t === TEXTOS.es ? "El email es obligatorio" : "Email is required");
+    return;
+  }
+
+  if (!email.includes("@")) {
+    setError(t === TEXTOS.es ? "Ingresá un email válido" : "Enter a valid email");
+    return;
+  }
+
+  if (!password.trim()) {
+    setError(t === TEXTOS.es ? "La contraseña es obligatoria" : "Password is required");
+    return;
+  }
+
+  if (password.length < 6) {
+    setError(t === TEXTOS.es ? "La contraseña debe tener al menos 6 caracteres" : "Password must be at least 6 characters");
+    return;
+  }
+
     if (password !== confirmPassword) {
       setError(t === TEXTOS.es ? "Las contraseñas no coinciden" : "Passwords do not match");
       return;

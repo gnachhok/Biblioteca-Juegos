@@ -22,13 +22,19 @@ const links = [
     !token && { to: "/register", label: "Registro" },
     token && (user?.role === "admin" || user?.role === "superadmin") && { to: "/add-games", label: "Agregar Juegos" },
     token && user?.role === "superadmin" && { to: "/super-admin", label: "Super Admin" },
-    token && { to: "/mi-biblioteca", label: "Mi Biblioteca" },
+    token && { to: "/mibiblioteca", label: "Mi Biblioteca" },
 ].filter(Boolean);
 
   return (
     <nav className="navbar">
       <div className="navbar__brand">
-        🎮 <span>BibliotecaGamer</span>
+        <div className="navbar__brand">
+          <img
+            src="/IconoPagina.png"
+            alt="BibliotecaGamer"
+            className="navbar__logo"
+          />
+</div>
       </div>
       <div className="navbar__links">
         {links.map((link) => (

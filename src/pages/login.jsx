@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useState } from "react";
-import { useAuth } from "../context/authContext"
+import { useAuth } from "../context/authContext";
 
 function Login() {
         const [email, setEmail] = useState("")
@@ -12,6 +12,21 @@ function Login() {
 
         const handleLogin = async (e) => {
             e.preventDefault()
+
+            if (!email.trim()) {
+              setError("Ingresá tu email");
+              return;
+            }
+
+            if (!email.includes("@")) {
+              setError("Ingresá un email válido");
+              return;
+            }
+
+            if (!password.trim()) {
+              setError("Ingresá tu contraseña");
+              return;
+            }
 
             const response = await fetch("http://localhost:3000/auth/login", {
                 method: "POST",

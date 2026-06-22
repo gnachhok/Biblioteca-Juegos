@@ -30,3 +30,21 @@ export const removeFromLibrary = async (req, res) => {
     await UserGame.destroy({ where: { id } });
     res.json({ mensaje: "Juego eliminado de la biblioteca" });
 };
+
+export const updateLibraryGame = async (req, res) => {
+    const { id } = req.params;
+    const { hoursPlayed, status } = req.body;
+
+    const userGame = await UserGame.findByPk(id);
+
+    if (!userGame) {
+        return res.status(404).json({ mensaje: "Juego de biblioteca no encontrado" });
+    }
+
+    await userGame.update({
+        hoursPlayed,
+        status
+    });
+
+    res.json(userGame);
+};

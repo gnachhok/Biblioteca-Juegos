@@ -67,3 +67,10 @@
     background: #ef4444;
     color: #fff;
 }
+
+.navbar__logo {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}

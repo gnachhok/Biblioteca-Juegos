@@ -1,4 +1,4 @@
-import GameCard from "../components/GameCard";
+import GameCard from "../components/gamecard";
 import "./Games.css";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
@@ -12,6 +12,8 @@ function Games() {
 
 const [games, setGames] = useState([]);
 const { token, user } = useAuth();
+const [mensaje, setMensaje] = useState("");
+const [tipoMensaje, setTipoMensaje] = useState("");
 
 useEffect(() => {
   fetch("http://localhost:3000/games")
@@ -32,11 +34,13 @@ useEffect(() => {
       const data = await response.json();
 
       if (!response.ok) {
-          alert(data.mensaje || "Error al agregar");
-          return;
+        setMensaje(data.mensaje || "Error al agregar");
+        setTipoMensaje("error");
+        return;
       }
 
-      alert("¡Juego agregado a tu biblioteca!");
+      setMensaje("¡Juego agregado a tu biblioteca!");
+      setTipoMensaje("success");
   };
 
   return (
@@ -54,6 +58,12 @@ useEffect(() => {
             </button>
           ))}
         </div>
+
+        {mensaje && (
+          <div className={`games__toast games__toast--${tipoMensaje}`}>
+            {mensaje}
+          </div>
+        )}
         <input
           type="text"
           className="games__search"
@@ -65,9 +75,12 @@ useEffect(() => {
         {games.map((game) => (
             <div key={game.id}>
                 <GameCard {...game} />
-                <button onClick={() => handleAddToLibrary(game.id)}>
-                    + Mi biblioteca
-                </button>
+            <button
+              className="games__add-button"
+              onClick={() => handleAddToLibrary(game.id)}
+            >
+              + Mi biblioteca
+            </button>
             </div>
         ))}
       </div>

@@ -9,7 +9,7 @@ import Usuarios from "./pages/superAdmin/Usuarios";
 import SuperAdmin from "./pages/superAdmin/superAdmin";
 import NotFound from "./pages/NotFound";
 import RutaProtegida from "./components/RutaProtegida";
-import MiBiblioteca from "./pages/miBiblioteca";
+import MiBiblioteca from "./pages/Biblioteca-user/miBiblioteca.jsx";
 
 function App() {
   return (
@@ -20,7 +20,12 @@ function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/mibiblioteca" element={<MiBiblioteca />} />
+
+          <Route path="/mibiblioteca" element={
+            <RutaProtegida roles={["user", "admin", "superadmin"]}>
+              <MiBiblioteca />
+            </RutaProtegida>
+          } />
 
           <Route path="/add-games" element={
             <RutaProtegida roles={["admin", "superadmin"]}>
