@@ -101,8 +101,8 @@ function MiBiblioteca() {
                                 description={ug.Game?.description}
                                 image={ug.Game?.image}
                                 genre={ug.Game?.gender}
+                                developer={ug.Game?.developer}
                             />
-
                             <div className="library-card__controls">
                                 <label>
                                     Horas jugadas

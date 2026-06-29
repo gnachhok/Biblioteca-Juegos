@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "./addGames.css";
 import { useAuth } from "../context/authContext";
 
-const PLATAFORMAS = ["PC", "PlayStation 5", "PlayStation 4", "Xbox Series X", "Xbox One", "Nintendo Switch", "Mobile"];
 const GENEROS = ["Acción", "Aventura", "RPG", "Estrategia", "Deportes", "Terror", "Simulación", "Puzzle", "Indie"];
 
 const initialForm = {
@@ -25,10 +24,10 @@ function AddGames() {
 
     const validar = () => {
         const nuevosErrores = {};
-        if (!form.title.trim()) nuevosErrores.nombre = "El nombre es obligatorio.";
-        if (!form.developer.trim()) nuevosErrores.creador = "El creador es obligatorio.";
+        if (!form.title.trim()) nuevosErrores.title = "El nombre es obligatorio.";
+        if (!form.developer.trim()) nuevosErrores.developer = "El creador es obligatorio.";
         if (!form.description.trim()) nuevosErrores.description = "La descripción es obligatoria.";
-        if (!form.gender) nuevosErrores.genero = "Seleccioná un género.";
+        if (!form.gender) nuevosErrores.gender = "Seleccioná un género.";
         return nuevosErrores;
     };
 
@@ -47,11 +46,11 @@ function AddGames() {
             return;
         }
 
-      
+
         try {
 
-            const url = editandoId 
-                ? `http://localhost:3000/games/${editandoId}` 
+            const url = editandoId
+                ? `http://localhost:3000/games/${editandoId}`
                 : "http://localhost:3000/games";
 
             const method = editandoId ? "PUT" : "POST";
@@ -68,9 +67,9 @@ function AddGames() {
             const data = await response.json();
 
             if (editandoId) {
-            setJuegos(juegos.map((j) => (j.id === editandoId ? data : j)));
-            } else{
-            setJuegos([data, ...juegos])
+                setJuegos(juegos.map((j) => (j.id === editandoId ? data : j)));
+            } else {
+                setJuegos([data, ...juegos])
             }
             setForm(initialForm);
             setErrores({});
@@ -80,12 +79,12 @@ function AddGames() {
                 setMostrarFormulario(false);
                 setEditandoId(null);
             }, 1800);
-        } catch (error){
+        } catch (error) {
             console.error("Error al agregar juego", error);
         }
     }
 
-        const [editandoId, setEditandoId] = useState(null);
+    const [editandoId, setEditandoId] = useState(null);
 
     const handleEdit = (juego) => {
         setForm({
@@ -118,16 +117,16 @@ function AddGames() {
         setJuegos(juegos.filter((j) => j.id !== id));
     };
 
-useEffect(() => {
-    fetch("http://localhost:3000/games")
-        .then(res => res.json())
-        .then(data => setJuegos(data));
-}, []);
+    useEffect(() => {
+        fetch("http://localhost:3000/games")
+            .then(res => res.json())
+            .then(data => setJuegos(data));
+    }, []);
 
 
     return (
         <>
-            
+
 
             <div className="ag-page">
                 <div className="ag-header">
@@ -172,7 +171,7 @@ useEffect(() => {
                                             <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
                                                 <button className="ag-btn-edit" onClick={() => handleEdit(j)}>Editar</button>
                                                 <button className="ag-btn-delete" onClick={() => handleDelete(j.id)}>Eliminar</button>
-                                            </div>                                            
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -194,14 +193,14 @@ useEffect(() => {
                             </button>
                         </div>
 
-                            {enviado ? (
-                                <div className="ag-success">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="20 6 9 17 4 12" />
-                                    </svg>
-                                    {editandoId ? "¡Juego actualizado exitosamente!" : "¡Juego agregado exitosamente!"}
-                                </div>
-                            ) : (
+                        {enviado ? (
+                            <div className="ag-success">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                {editandoId ? "¡Juego actualizado exitosamente!" : "¡Juego agregado exitosamente!"}
+                            </div>
+                        ) : (
                             <form className="ag-form" onSubmit={handleSubmit} noValidate>
 
                                 <div className="ag-field">
@@ -266,43 +265,43 @@ useEffect(() => {
                                 </div>
 
                                 <div className="ag-field">
-                                  <label className="ag-label">Descripción <span>*</span></label>
-                                  <textarea
-                                    className={`ag-input${errores.description ? " ag-input--error" : ""}`}
-                                    name="description"
-                                    value={form.description}
-                                    onChange={handleChange}
-                                    placeholder="Descripción del juego..."
-                                    rows={3}
-                                  />
-                                  {errores.description && <span className="ag-error-msg">{errores.description}</span>}
-                                  </div>
+                                    <label className="ag-label">Descripción <span>*</span></label>
+                                    <textarea
+                                        className={`ag-input${errores.description ? " ag-input--error" : ""}`}
+                                        name="description"
+                                        value={form.description}
+                                        onChange={handleChange}
+                                        placeholder="Descripción del juego..."
+                                        rows={3}
+                                    />
+                                    {errores.description && <span className="ag-error-msg">{errores.description}</span>}
+                                </div>
 
-                                  <div className="ag-field">
-                                      <label className="ag-label">Status <span>*</span></label>
-                                      <select
-                                          className={`ag-select${errores.status ? " ag-select--error" : ""}`}
-                                          name="status"
-                                          value={form.status}
-                                          onChange={handleChange}
-                                      >
-                                          <option value="Descargar">Descargar</option>
-                                          <option value="Instalado">Instalado</option>
-                                      </select>
-                                  </div>
+                                <div className="ag-field">
+                                    <label className="ag-label">Status <span>*</span></label>
+                                    <select
+                                        className={`ag-select${errores.status ? " ag-select--error" : ""}`}
+                                        name="status"
+                                        value={form.status}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="Descargar">Descargar</option>
+                                        <option value="Instalado">Instalado</option>
+                                    </select>
+                                </div>
 
-                                  <div className="ag-field">
-                                      <label className="ag-label">Horas jugadas</label>
-                                      <input
-                                          className="ag-input"
-                                          type="number"
-                                          name="hoursPlayed"
-                                          value={form.hoursPlayed}
-                                          onChange={handleChange}
-                                          placeholder="0"
-                                          min="0"
-                                      />
-                                  </div>
+                                <div className="ag-field">
+                                    <label className="ag-label">Horas jugadas</label>
+                                    <input
+                                        className="ag-input"
+                                        type="number"
+                                        name="hoursPlayed"
+                                        value={form.hoursPlayed}
+                                        onChange={handleChange}
+                                        placeholder="0"
+                                        min="0"
+                                    />
+                                </div>
 
                                 <div className="ag-form-actions">
                                     <button type="button" className="ag-btn-cancel" onClick={handleCancelar}>Cancelar</button>
